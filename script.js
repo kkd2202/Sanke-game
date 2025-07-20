@@ -22,14 +22,14 @@ let score = 0;
 let highScore = localStorage.getItem('highScore') || 0;
 highScoreSpan.textContent = highScore;
 
-// 🎮 Start screen state
+// 🎮 Game state
 let isGameRunning = false;
 
-// 🎛️ Input listener
+// 🔄 Keyboard input
 document.addEventListener('keydown', (e) => {
   if (!isGameRunning) {
     isGameRunning = true;
-    direction = 'RIGHT'; // Start moving right
+    direction = 'RIGHT';
     musicSound.play();
     return;
   }
@@ -50,7 +50,39 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// 🎯 Collision detection
+// 📱 Swipe support for mobile
+let touchStartX = 0;
+let touchStartY = 0;
+
+canvas.addEventListener("touchstart", (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+});
+
+canvas.addEventListener("touchend", (e) => {
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
+
+  const dx = touchEndX - touchStartX;
+  const dy = touchEndY - touchStartY;
+
+  if (!isGameRunning) {
+    isGameRunning = true;
+    direction = 'RIGHT';
+    musicSound.play();
+    return;
+  }
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 0 && direction !== 'LEFT') direction = 'RIGHT';
+    else if (dx < 0 && direction !== 'RIGHT') direction = 'LEFT';
+  } else {
+    if (dy > 0 && direction !== 'UP') direction = 'DOWN';
+    else if (dy < 0 && direction !== 'DOWN') direction = 'UP';
+  }
+});
+
+// 💥 Collision detection
 function isCollision(head, body) {
   return body.some(segment => segment.x === head.x && segment.y === head.y);
 }
@@ -62,10 +94,10 @@ function drawStartScreen() {
   ctx.font = '32px New Tegomin, serif';
   ctx.fillStyle = 'red';
   ctx.textAlign = 'center';
-  ctx.fillText('Game Over! Press any key to start', canvas.width / 2, canvas.height / 2);
+  ctx.fillText('Game Over! Tap or Press to Start', canvas.width / 2, canvas.height / 2);
 }
 
-// 🕹️ Main draw loop
+// 🕹️ Game render loop
 function draw() {
   if (!isGameRunning) {
     drawStartScreen();
@@ -128,7 +160,5 @@ function draw() {
   snake.unshift(head);
 }
 
-// ⏱️ Game loop
+// 🚀 Game loop
 setInterval(draw, 100);
-
-
