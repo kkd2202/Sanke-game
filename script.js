@@ -4,9 +4,9 @@ const scoreSpan = document.getElementById('score');
 const highScoreSpan = document.getElementById('highScore');
 
 // 🎵 Audio setup
-const foodSound = new Audio('music/food.mp3');
-const gameOverSound = new Audio('music/gameover.mp3');
-const musicSound = new Audio('music/music.mp3');
+const foodSound = new Audio('https://kkd2202.github.io/Sanke-game/food.mp3');
+const gameOverSound = new Audio('https://kkd2202.github.io/Sanke-game/gameover.mp3');
+const musicSound = new Audio('https://kkd2202.github.io/Sanke-game/music.mp3');
 musicSound.loop = true;
 musicSound.volume = 0.3;
 
