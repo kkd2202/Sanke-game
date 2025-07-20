@@ -4,9 +4,9 @@ const scoreSpan = document.getElementById('score');
 const highScoreSpan = document.getElementById('highScore');
 
 // 🎵 Audio setup
-const foodSound = new Audio('https://kkd2202.github.io/Sanke-game/food.mp3');
-const gameOverSound = new Audio('https://kkd2202.github.io/Sanke-game/gameover.mp3');
-const musicSound = new Audio('https://kkd2202.github.io/Sanke-game/music.mp3');
+const foodSound = new Audio('https://kkd2202.github.io/snake-game/food.mp3');
+const gameOverSound = new Audio('https://kkd2202.github.io/snake-game/gameover.mp3');
+const musicSound = new Audio('https://kkd2202.github.io/snake-game/music.mp3');
 musicSound.loop = true;
 musicSound.volume = 0.3;
 
@@ -22,15 +22,20 @@ let score = 0;
 let highScore = localStorage.getItem('highScore') || 0;
 highScoreSpan.textContent = highScore;
 
-// 🎮 Game state
+// 🎮 Start screen state
 let isGameRunning = false;
 
-// 🔄 Keyboard input
+// 🎛 Input listener with improved music playback
 document.addEventListener('keydown', (e) => {
   if (!isGameRunning) {
     isGameRunning = true;
-    direction = 'RIGHT';
-    musicSound.play();
+    direction = 'RIGHT'; // Start moving right
+
+    musicSound.load(); // Helps some browsers buffer the audio correctly
+    musicSound.play().catch((err) => {
+      console.log('Music playback failed:', err);
+    });
+
     return;
   }
 
@@ -50,41 +55,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// 📱 Swipe support for mobile
-let touchStartX = 0;
-let touchStartY = 0;
-
-canvas.addEventListener("touchstart", (e) => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-});
-
-canvas.addEventListener("touchend", (e) => {
-  const touchEndX = e.changedTouches[0].clientX;
-  const touchEndY = e.changedTouches[0].clientY;
-
-  const dx = touchEndX - touchStartX;
-  const dy = touchEndY - touchStartY;
-
-  if (!isGameRunning) {
-    isGameRunning = true;
-    direction = 'RIGHT';
-    musicSound.play().catch((e) => {
-  console.warn("Autoplay blocked:", e);
-  });
-    return;
-  }
-
-  if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > 0 && direction !== 'LEFT') direction = 'RIGHT';
-    else if (dx < 0 && direction !== 'RIGHT') direction = 'LEFT';
-  } else {
-    if (dy > 0 && direction !== 'UP') direction = 'DOWN';
-    else if (dy < 0 && direction !== 'DOWN') direction = 'UP';
-  }
-});
-
-// 💥 Collision detection
+// 🎯 Collision detection
 function isCollision(head, body) {
   return body.some(segment => segment.x === head.x && segment.y === head.y);
 }
@@ -96,10 +67,10 @@ function drawStartScreen() {
   ctx.font = '32px New Tegomin, serif';
   ctx.fillStyle = 'red';
   ctx.textAlign = 'center';
-  ctx.fillText('Game Over! Tap or Press to Start', canvas.width / 2, canvas.height / 2);
+  ctx.fillText('Game Over! Press any key to start', canvas.width / 2, canvas.height / 2);
 }
 
-// 🕹️ Game render loop
+// 🕹 Main draw loop
 function draw() {
   if (!isGameRunning) {
     drawStartScreen();
@@ -162,5 +133,5 @@ function draw() {
   snake.unshift(head);
 }
 
-// 🚀 Game loop
+// ⏱ Game loop
 setInterval(draw, 100);
