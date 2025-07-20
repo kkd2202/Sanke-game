@@ -69,7 +69,9 @@ canvas.addEventListener("touchend", (e) => {
   if (!isGameRunning) {
     isGameRunning = true;
     direction = 'RIGHT';
-    musicSound.play();
+    musicSound.play().catch((e) => {
+  console.warn("Autoplay blocked:", e);
+  });
     return;
   }
 
