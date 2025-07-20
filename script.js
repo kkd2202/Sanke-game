@@ -131,3 +131,4 @@ function draw() {
 // ⏱️ Game loop
 setInterval(draw, 100);
 
+
